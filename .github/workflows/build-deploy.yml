@@ -1,0 +1,24 @@
+name: Build and deploy app
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    environment:
+      name: testing
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: say hello world
+        run: echo "hello world"
