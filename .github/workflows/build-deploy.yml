@@ -11,14 +11,39 @@ jobs:
     environment:
       name: testing
 
+    env:
+      MONGODB_URL: mongodb://127.0.0.1:27017/node-boilerplate
+      JWT_SECRET: thisisasamplesecret
+      JWT_ACCESS_EXPIRATION_MINUTES: 30
+      JWT_REFRESH_EXPIRATION_DAYS: 30
+      JWT_RESET_PASSWORD_EXPIRATION_MINUTES: 10
+      JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: 10
+
+    services:
+      mongodb:
+        image: mongo
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 15.x]
+        node-version: [14.x]
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: say hello world
-        run: echo "hello world"
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - run: yarn test
